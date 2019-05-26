@@ -6,7 +6,7 @@ function Rope(game, x, y, key, frame, player) {
   this.speed = 0.5;
   this.reach = false;
 
-  this.scale.y = 3;
+  this.scale.y = 1;
   this.anchor.set(0.5);
   game.physics.enable(this, Phaser.Physics.ARCADE);
   //this.pivot.x = 500;	// Give trap 3 a pivot point that it can rotated around

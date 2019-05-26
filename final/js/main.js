@@ -14,7 +14,7 @@ MainMenu.prototype = {
 
 		// Load tmp assest
 		game.load.audio('bgm', 'assets/audio/bgm.mp3');
-		game.load.image('ground', 'assets/img/Carrier_0001.png');
+		game.load.image('ground', 'assets/img/ground.png');
 		game.load.image('box', 'assets/img/Box_Small_0003.png');
 		game.load.image('ladder', 'assets/img/Ladder_Iron_0001.png');
 		game.load.image('button', 'assets/img/Button.png');
@@ -23,7 +23,7 @@ MainMenu.prototype = {
 		game.load.image('spike', 'assets/img/Spikes_0003.png');
 		game.load.image('item', 'assets/img/item.png',300, 300);
 		game.load.spritesheet('hero', 'assets/img/hero.png',50 ,37);
-	    game.load.tilemap('test', 'assets/map/t10.json', null, Phaser.Tilemap.TILED_JSON);
+	    game.load.tilemap('test', 'assets/map/t11.json', null, Phaser.Tilemap.TILED_JSON);
 
 	    game.load.image('swingTrap', 'assets/img/SwingTrap.png');
 	    game.load.image('block', 'assets/img/Block.png');
@@ -61,8 +61,8 @@ GameOver.prototype = {
 var GamePlay = function(game) {
 	// Local varaibles
 	this.player;
-	this.box;
-	this.box2;
+	//this.box;
+	//this.box2;
 	this.groundTrap;
  
 };
@@ -87,7 +87,7 @@ GamePlay.prototype = {
 		this.mapLayer = this.map.createLayer('Tile Layer 1'); // Crate a map layer
 		this.mapLayer.resizeWorld();
 
-		this.player = new Player(game, 5800, 363, 'hero', 0); // add player to game
+		this.player = new Player(game, 6000, 363, 'hero', 0); // add player to game
 		game.add.existing(this.player);
 
 		this.ladder = new Ladder(game, 600, 345, 'ladder', 0, this.player); // add player to game
@@ -184,6 +184,7 @@ GamePlay.prototype = {
 
 		game.camera.follow(this.player);
 
+		game.camera.y -= 1000;
 		
 	},
 
