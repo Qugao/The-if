@@ -4,10 +4,10 @@ function WallTrap(game, x, y, key, frame, player) {
   this.game = game;
   this.player = player;
   this.anchor.set(0.5);
-  this.scale.y = 1.2;
+  this.scale.y = 2;
 
   game.physics.enable(this, Phaser.Physics.ARCADE);
-  this.body.gravity.y = 1000;
+  //this.body.gravity.y = 1000;
 
 
 }

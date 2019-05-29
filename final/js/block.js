@@ -6,6 +6,8 @@ function Block(game, x, y, key, frame, player) {
 
   game.physics.enable(this, Phaser.Physics.ARCADE);
   this.body.immovable = true;
+  this.body.tilePadding.x=32;
+  this.body.tilePadding.y=32;
 
 }
 
