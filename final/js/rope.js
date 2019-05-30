@@ -25,6 +25,7 @@ Rope.prototype.update = function() {
 
 	if (this.isClimbing) {
 		this.player.body.velocity.y = 0;
+		this.player.body.velocity.x = 0;
 		this.player.body.gravity.y = 0;
 
 		if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
@@ -35,7 +36,7 @@ Rope.prototype.update = function() {
 			this.player.body.velocity.y = 700;
 		}
 	} else {
-		this.player.body.gravity.y = 500;
+		this.player.body.gravity.y = 300;
 		this.player.jumps = 3;
 	}
 }
