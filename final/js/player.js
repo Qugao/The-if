@@ -22,23 +22,20 @@ Player.prototype = Object.create(Phaser.Sprite.prototype);
 Player.prototype.constructor = Player;
 
 Player.prototype.update = function() {
-  this.body.gravity.y = 1200;
+      this.body.gravity.y = 1200;
       if(this.body.blocked.down || this.body.touching.down) {
-     //   this.body.setSize(18, 31, 15, 5); // IF player is grounded then he should have normal collision box
-        this.jumps = 3; // Triple jump counter
         this.jumping = false; // Jump toggle switch
       } else {
         this.animations.play('jump', false);
       }
 
-      if (this.jumps > 0) {
+      if (this.body.touching.down || this.body.blocked.down) {
         if(game.input.keyboard.justPressed(Phaser.Keyboard.UP)) {
          //   this.body.setSize(18, 20, 15, 15);
             this.body.velocity.y = -600;
             //this.body.velocity.x = 300;
             this.jumping = true;
             this.animations.play('jump', false);
-            this.jumps--;
         }
       }
 

@@ -18,7 +18,7 @@ Button.prototype.constructor = Button;
 
 Button.prototype.update = function() {
   this.hit = game.physics.arcade.overlap(this, this.player);
-  this.hit1 = game.physics.arcade.collide(this, this.player);
+ // this.hit1 = game.physics.arcade.collide(this, this.player);
  // this.hit_box = game.physics.arcade.collide(this, this.box);
 	game.physics.arcade.collide(this, this.mapLayer);
 

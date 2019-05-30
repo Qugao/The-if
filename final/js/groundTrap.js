@@ -15,4 +15,8 @@ GroundTrap.prototype.constructor = GroundTrap;
 GroundTrap.prototype.update = function() {
 	this.hit = game.physics.arcade.overlap(this, this.player);
 
+	if (this.hit) {
+		game.state.start('GamePlay', true, false);
+	}
+
 }

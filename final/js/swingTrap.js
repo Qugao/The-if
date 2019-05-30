@@ -32,14 +32,19 @@ SwingTrap.prototype.update = function() {
 			this.angle += this.speed;
 		}
 		// When 'reach' switch is toggled we need make this trap go back to its start postion
-		if (this.reach == true) {
+	if (this.reach == true) {
 				// We keep decreasing its angle unitl it goes to 0 degrees
-				this.angle -= 2 * this.speed;
+		this.angle -= 2 * this.speed;
 				// If it goes beyond -180 then it will become -180 degree which is our started position
-				if (this.angle <= 180 && this.angle >= 0) {
-					this.angle = 180;
-					this.reach = false;
-				}
+			if (this.angle <= 180 && this.angle >= 0) {
+				this.angle = 180;
+				this.reach = false;
+			}
 			
-		}
+	}
+
+	if (this.hit) {
+		game.state.start('GamePlay', true, false);
+	}
+	
 }
