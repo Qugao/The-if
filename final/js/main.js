@@ -19,13 +19,14 @@ MainMenu.prototype = {
 		game.load.image('Big_box', 'assets/img/Box_Large_0001.png');
 		game.load.image('ladder', 'assets/img/Ladder_Iron_0001.png');
 		game.load.image('button', 'assets/img/Button.png');
+		game.load.image('fog', 'assets/img/fog.png');
 		game.load.image('button_1', 'assets/img/Button_0004.png');
 		game.load.image('trap', 'assets/img/Wall_Trap_R_0001.png');
 		game.load.image('trap2', 'assets/img/Trap_Circle_0003.png');
 		game.load.image('trap3', 'assets/img/Small_Circular Saw Blade_0010.png');
 		game.load.image('spike', 'assets/img/Spikes_0003.png');
 		game.load.image('item', 'assets/img/item.png',300, 300);
-		game.load.spritesheet('hero', 'assets/img/hero.png',50 ,37);
+		game.load.spritesheet('hero', 'assets/img/seth.png', 160, 200);
 		game.load.tilemap('test', 'assets/map/t10.json', null, Phaser.Tilemap.TILED_JSON);
 		
 	    game.load.image('swingTrap', 'assets/img/SwingTrap.png');
@@ -90,7 +91,7 @@ GamePlay.prototype = {
 	},
 
 	create: function() {
-		// Set up game's physics properties
+				// Set up game's physics properties
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
 		// play music
@@ -103,6 +104,7 @@ GamePlay.prototype = {
 		this.map.setCollisionByExclusion([]); // Make map is able to collide with other objects
 		this.mapLayer = this.map.createLayer('Tile Layer 1'); // Crate a map layer
 		this.mapLayer.resizeWorld();
+
 
 		this.player = new Player(game, 400, 963, 'hero', 0); // add player to game
 		game.add.existing(this.player);
@@ -253,7 +255,7 @@ GamePlay.prototype = {
 		this.circle_trap = new circleTrap(game, 12650, 1150, 'circle_trap', 0, this.player); // add player to game
 		game.add.existing(this.circle_trap);
 
-		game.camera.follow(this.player);
+		game.camera.follow(this.player, 0.1, 0.1);
 
 		this.movingTrap1 = new movingtrap(game, 13500, 1250, 'barrier', 0, this.player, 2, 0.3); // add player to game
 		game.add.existing(this.movingTrap1);
@@ -402,10 +404,16 @@ GamePlay.prototype = {
 		game.add.existing(this.wallTrap4);
 		this.wallTrap4.scale.x = -1;
 
+		this.fog = this.add.sprite(0, 900, 'fog');
+		game.physics.enable(this.fog, Phaser.Physics.ARCADE);
+		this.fog.scale.setTo(5);
+
 	},
 
 
 	update: function() {
+		this.fog.body.velocity.x -= 0.01;
+
 		game.physics.arcade.collide(this.player, this.mapLayer);
 		game.physics.arcade.collide(this.box, this.mapLayer);
 		game.physics.arcade.collide(this.box3, this.mapLayer);
