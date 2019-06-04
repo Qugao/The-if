@@ -14,6 +14,7 @@ MainMenu.prototype = {
 
 		// Load tmp assest
 		game.load.audio('bgm', 'assets/audio/bgm.mp3');
+		game.load.image('b', 'assets/img/back4.jpg');
 		game.load.image('ground', 'assets/img/ground.png');
 		game.load.image('box', 'assets/img/Box_Small_0003.png');
 		game.load.image('Big_box', 'assets/img/Box_Large_0001.png');
@@ -102,11 +103,17 @@ GamePlay.prototype = {
 		//music.play();
 		// Set up game map and background color
 		game.stage.backgroundColor = "#e0e0e0";
+		//game.add.image(100, 900, 'b');
+		var myimage = game.add.sprite(0,200, 'b');
+		myimage.scale.setTo(2);
+		var myimage2 = game.add.sprite(21000,200, 'b');
+		myimage2.scale.setTo(2);
 		this.map = game.add.tilemap('test');
 		this.map.addTilesetImage('ground', 'ground');
 		this.map.setCollisionByExclusion([]); // Make map is able to collide with other objects
 		this.mapLayer = this.map.createLayer('Tile Layer 1'); // Crate a map layer
 		this.mapLayer.resizeWorld();
+		//game.add.image(0, 0, 'b');
 
 		this.player = new Player(game, checkPoint_x, checkPoint_y, 'hero', 0);  
 		game.add.existing(this.player);
@@ -189,13 +196,14 @@ GamePlay.prototype = {
 		this.button3 = new Button(game, 6400, 1250, 'button', 0, this.player, this.mapLayer);  
 		game.add.existing(this.button3);
 		z2 = this.button3.y;
+		/*
 		this.button4 = new Button(game, 7000, 1250, 'button', 0, this.player, this.mapLayer);  
 		game.add.existing(this.button4);
 		z3 = this.button4.y;
 		this.button5 = new Button(game, 7600, 1250, 'button', 0, this.player, this.mapLayer);  
 		game.add.existing(this.button5);
         z = this.button5.y;
-
+*/
 		this.checkPoint2 = new CheckPoint(game, 9100, 700, 'button', 0, this.player, this.mapLayer);
 		game.add.existing(this.checkPoint2);
 
@@ -212,6 +220,9 @@ GamePlay.prototype = {
 		this.swingRope1 = new circleTrap(game, 10250, 1220, 'trap3', 0, this.player);  
 		game.add.existing(this.swingRope1);
 		this.swingRope1.body.setSize(180, 180, 30, 30);
+
+		this.checkPoint0 = new CheckPoint(game, 10500, 700, 'button', 0, this.player, this.mapLayer);
+		game.add.existing(this.checkPoint0);
 
 
 
@@ -269,36 +280,36 @@ GamePlay.prototype = {
 		game.add.existing(this.button7);
         z7 = this.button7.y;
 
-		this.movingTrap7 = new movingtrap(game, 19300, 450, 'barrier', 0, this.player, 2, 0.5, this.mapLayer);  
+		this.movingTrap7 = new movingtrap(game, 19300, 450, 'barrier', 0, this.player, 1.5, 0.5, this.mapLayer);  
 		game.add.existing(this.movingTrap7);
-		this.movingTrap7.movingSpeed += 30;
+		this.movingTrap7.movingSpeed += 20;
 		this.movingTrap7.body.velocity.y = this.movingTrap7.movingSpeed;
 		this.movingTrap7.startMoving = true;
 
-		this.movingTrap8 = new movingtrap(game, 19520, 950, 'barrier', 0, this.player, 2, 0.5, this.mapLayer);  
+		this.movingTrap8 = new movingtrap(game, 19520, 950, 'barrier', 0, this.player, 3, 0.5, this.mapLayer);  
 		game.add.existing(this.movingTrap8);
-		this.movingTrap8.movingSpeed += 10;
+		this.movingTrap8.movingSpeed += 40;
 		this.movingTrap8.body.velocity.y = this.movingTrap8.movingSpeed;
 		this.movingTrap8.startMoving = true;
 
-		this.movingTrap9 = new movingtrap(game, 19740, 450, 'barrier', 0, this.player, 2, 0.5, this.mapLayer);  
+		this.movingTrap9 = new movingtrap(game, 19740, 450, 'barrier', 0, this.player, 3, 0.5, this.mapLayer);  
 		game.add.existing(this.movingTrap9);
 		this.movingTrap9.movingSpeed += 50;
 		this.movingTrap9.body.velocity.y = this.movingTrap9.movingSpeed;
 		this.movingTrap9.startMoving = true;
 
-		this.movingTrap10 = new movingtrap(game, 19960, 950, 'barrier', 0, this.player, 2, 0.5, this.mapLayer);  
+		this.movingTrap10 = new movingtrap(game, 19960, 950, 'barrier', 0, this.player, 3, 0.5, this.mapLayer);  
 		game.add.existing(this.movingTrap10);
 		this.movingTrap10.movingSpeed += 100;
 		this.movingTrap10.body.velocity.y = this.movingTrap10.movingSpeed;
 		this.movingTrap10.startMoving = true;
 
-		this.movingTrap11 = new movingtrap(game, 20180, 450, 'barrier', 0, this.player, 2, 0.5, this.mapLayer);  
+		this.movingTrap11 = new movingtrap(game, 20180, 450, 'barrier', 0, this.player, 3, 0.5, this.mapLayer);  
 		game.add.existing(this.movingTrap11);
 		this.movingTrap11.body.velocity.y = 150;
 		this.movingTrap11.startMoving = true;
 
-		this.movingTrap12 = new movingtrap(game, 20400, 950, 'barrier', 0, this.player, 2, 0.5, this.mapLayer);  
+		this.movingTrap12 = new movingtrap(game, 20400, 950, 'barrier', 0, this.player, 1.5, 0.5, this.mapLayer);  
 		game.add.existing(this.movingTrap12);
 		this.movingTrap12.body.velocity.y = 150;
 		this.movingTrap12.startMoving = true;
@@ -440,7 +451,7 @@ GamePlay.prototype = {
 		this.fog.scale.setTo(5);
 		this.fog.body.velocity.x = 10;
 
-		game.camera.follow(this.player, 0.05, 0.05);
+		game.camera.follow(this.player, 0.025, 0.025);
 
 	},
 
@@ -504,7 +515,7 @@ GamePlay.prototype = {
 			this.box3.body.gravity.y = 1000;
 			this.button3.y =z2+15;
 		}
-
+/*
 		if (this.button4.hit) {
 			this.box4.body.gravity.y = 1000;
 			this.button4.y =z3+15;
@@ -515,7 +526,7 @@ GamePlay.prototype = {
 			this.button5.y =z+15;
 
 		}
-
+*/
 		if (this.button_L.hit1) {
 			this.button_L.x=z4+6;
 		}
@@ -562,7 +573,7 @@ GamePlay.prototype = {
 			this.wallTrap.body.moves = false;
 		}
 
-		if (this.player.body.x >= 13000 && this.player.body.x <= 18076) {
+		if (this.player.body.x >= 13000) {
 			this.circle_trap.body.moves = true;
 			this.circle_trap.body.velocity.x = 280;
 		} else {
