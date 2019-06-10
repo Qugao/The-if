@@ -1,10 +1,12 @@
+// swing trap prefab constructor function
 function SwingTrap(game, x, y, key, frame, player) {
-
+  // call to Phaser.Sprite and spawn a new object in x, y position
   Phaser.Sprite.call(this, game, x, y, key, frame);
+  // properties set up
   this.game = game;
   this.player = player;
-  this.speed = 1;
-  this.reach = false;
+  this.speed = 1; // rotate speed
+  this.reach = false; // reach toggle
 
   this.scale.setTo(0.5); 
   this.anchor.set(0.5);
@@ -42,9 +44,10 @@ SwingTrap.prototype.update = function() {
 			}
 			
 	}
-
+	// if player hit this object then he will be killed and start a new game
 	if (this.hit) {
-		game.state.start('GamePlay', true, false);
+		game.camera.fade(0x000000, 1000); // black screen fade in
+		this.player.body.moves = false;
 	}
 	
 }

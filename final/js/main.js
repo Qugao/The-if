@@ -1,68 +1,13 @@
 'use strict';
 // Team: Quan Gao, Bo Yang, NaiXin Lou
-// Source: https://drive.google.com/file/d/1C5PZWEgVSOIt4hDRZJE1HgJHPFnuk2yS/view?usp=sharing
-// Git: https://github.com/VanquishGQ/First_Prototype_1
-var game = new Phaser.Game(1280, 680, Phaser.AUTO);
-var message;
-var style = { font: '24px Helvetica', fill: '#FFF'};
-var checkPoint_x = 400;
+// Git: https://github.com/VanquishGQ/The-if
+
+var game = new Phaser.Game(1280, 680, Phaser.AUTO); // Game window size
+var message; // Message varaible
+var tMessage // tutorial message
+var style = { font: '24px Helvetica', fill: '#FFF'}; // Text style
 var music;
-// MainMenu state
-var MainMenu = function(game) {};
-MainMenu.prototype = {
-	preload: function() {
-
-		// Load tmp assest
-		game.load.audio('bgm', 'assets/audio/bgm.mp3');
-		game.load.image('b', 'assets/img/back4.jpg');
-		game.load.image('ground', 'assets/img/ground.png');
-		game.load.image('box', 'assets/img/Box_Small_0003.png');
-		game.load.image('Big_box', 'assets/img/Box_Large_0001.png');
-		game.load.image('ladder', 'assets/img/Ladder_Iron_0001.png');
-		game.load.image('button', 'assets/img/Button.png');
-		game.load.image('fog', 'assets/img/fog.png');
-		game.load.image('button_1', 'assets/img/Button_0004.png');
-		game.load.image('trap', 'assets/img/Wall_Trap_R_0001.png');
-		game.load.image('trap2', 'assets/img/Trap_Circle_0003.png');
-		game.load.image('trap3', 'assets/img/Small_Circular Saw Blade_0010.png');
-		game.load.image('spike', 'assets/img/Spikes_0003.png');
-		game.load.image('item', 'assets/img/item.png',300, 300);
-		game.load.spritesheet('hero', 'assets/img/seth.png', 160, 200);
-		game.load.tilemap('test', 'assets/map/t10.json', null, Phaser.Tilemap.TILED_JSON);
-		
-	    game.load.image('swingTrap', 'assets/img/SwingTrap.png');
-	    game.load.image('block', 'assets/img/Block.png');
-	    game.load.image('rope', 'assets/img/Rope.png');
-		game.load.image('wallTrap', 'assets/img/WallTrap.png');
-		game.load.image('barrier', 'assets/img/block.png');
-		game.load.image('circle_trap', 'assets/img/Large_Circular Saw Blade_0002.png');
-	},
-	create: function() {
-		message = game.add.text(game.world.centerX, game.world.centerY, "Press SPACEBAR to restart game\nArrow keys to move\nHold C to push and pull boxes", style);
-		message.anchor.set(0.5);
-	},
-	update: function() {
-        // jump to game play
-		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-			game.state.start('GamePlay', true, false);
-		}
-	}
-}
-
-
-
-// GameOver state
-var GameOver = function(game) {};
-GameOver.prototype = {
-	create: function() {
-
-	},
-	update: function() {
-		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-			game.state.start('GamePlay', true, false);
-		}
-	}
-}
+// these varaible are used to move button fall into the ground when it is triggered
 var z;
 var z1;
 var z2;
@@ -72,21 +17,78 @@ var z5;
 var z6;
 var z7;
 var z8;
+// global x, y location for player's spawning point
 var checkPoint_x = 400;
 var checkPoint_y = 1263;
-// GamePlay State
-var GamePlay = function(game) {
-	// Local varaibles
-	this.player;
-	this.box;
-	this.box2;
-	this.box3;
-	this.box4;
-	this.box6;
-	this.groundTrap;
+// timer varaibles
+var total = 0;
+var timer;
 
- 
-};
+// MainMenu state
+var MainMenu = function(game) {};
+MainMenu.prototype = {
+	preload: function() {
+
+		// Load tmp assest
+		// Aduio
+		game.load.audio('bgm', 'assets/audio/bgm.mp3');
+		game.load.audio('step', 'assets/audio/footStep.mp3');
+		game.load.audio('check', 'assets/audio/check.mp3');
+		game.load.audio('jump', 'assets/audio/jump.wav');
+		game.load.audio('push', 'assets/audio/push1.mp3');
+		game.load.audio('button', 'assets/audio/button.mp3');
+		game.load.audio('chain', 'assets/audio/chain.wav');
+
+		// image and spritesheet
+		game.load.image('ground', 'assets/img/ground.png');
+		game.load.image('b', 'assets/img/background.jpg');
+		game.load.image('box', 'assets/img/Box_Small_0003.png');
+		game.load.image('Big_box', 'assets/img/Box_Large_0001.png');
+		game.load.image('ladder', 'assets/img/Ladder_Iron_0001.png');
+		game.load.image('button', 'assets/img/Button.png');
+		game.load.image('checkPoint', 'assets/img/checkPoint.png');
+		game.load.image('fog', 'assets/img/fog.png');
+		game.load.image('button_1', 'assets/img/Button_0004.png');
+		game.load.image('trap', 'assets/img/Wall_Trap_R_0001.png');
+		game.load.image('trap2', 'assets/img/Trap_Circle_0003.png');
+		game.load.image('trap3', 'assets/img/Small_Circular Saw Blade_0010.png');
+		game.load.image('spike', 'assets/img/Spikes_0003.png');
+		game.load.spritesheet('hero', 'assets/img/seth.png', 160, 200);
+		game.load.spritesheet('portal', 'assets/img/portal.png', 320, 320);
+		game.load.image('swingTrap', 'assets/img/SwingTrap.png');
+	    game.load.image('block', 'assets/img/Block.png');
+	    game.load.image('rope', 'assets/img/Rope.png');
+		game.load.image('wallTrap', 'assets/img/WallTrap.png');
+		game.load.image('barrier', 'assets/img/block.png');
+		game.load.image('circle_trap', 'assets/img/Large_Circular Saw Blade_0002.png');
+		game.load.image('title', 'assets/img/title.png');
+		game.load.image('titleBackground', 'assets/img/titleBackground.jpg');
+
+		// map
+		game.load.tilemap('test', 'assets/map/t10.json', null, Phaser.Tilemap.TILED_JSON);
+
+	},
+	create: function() {
+		// Jump to game play after black screen fade in
+		game.camera.onFadeComplete.add(resetFade1, this);
+
+		// background and game title
+		var titleBackground = game.add.sprite(game.world.centerX, game.world.centerY, 'titleBackground');
+		titleBackground.anchor.set(0.5);
+
+		var title = game.add.sprite(game.world.centerX, game.world.centerY, 'title');
+		title.anchor.set(0.5);
+		title.scale.setTo(0.6);		
+	},
+	update: function() {
+        // jump to game play
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+			game.camera.fade(0x000000, 1000);
+		}
+	}
+}
+// GamePlay State
+var GamePlay = function(game) {};
 GamePlay.prototype = {
 
 	init: function() {
@@ -94,51 +96,71 @@ GamePlay.prototype = {
 	},
 
 	create: function() {
-		//game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-				// Set up game's physics properties
+		// Background music set up and play
+		music = new Phaser.Sound(game,'bgm',1, true);
+		music.play();
+
+		// Reset screen during gameplay after black screen faded in
+		game.camera.onFadeComplete.add(resetFade, this);
+
+		// Set up game map physics
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		game.physics.arcade.TILE_BIAS = 32;
-		// play music
-		//music = new Phaser.Sound(game,'bgm',1, true);
-		//music.play();
-		// Set up game map and background color
+
+		// Game map background
 		game.stage.backgroundColor = "#e0e0e0";
-		//game.add.image(100, 900, 'b');
 		var myimage = game.add.sprite(0,200, 'b');
 		myimage.scale.setTo(2);
 		var myimage2 = game.add.sprite(21000,200, 'b');
 		myimage2.scale.setTo(2);
+
+		// Add game map and set up map layer
 		this.map = game.add.tilemap('test');
 		this.map.addTilesetImage('ground', 'ground');
 		this.map.setCollisionByExclusion([]); // Make map is able to collide with other objects
 		this.mapLayer = this.map.createLayer('Tile Layer 1'); // Crate a map layer
 		this.mapLayer.resizeWorld();
-		//game.add.image(0, 0, 'b');
 
-		this.player = new Player(game, checkPoint_x, checkPoint_y, 'hero', 0);  
+		// Create final game portal
+		this.portal = game.add.sprite(29500,1000, 'portal', 0);
+		this.portal.animations.add('open',[0,1,2,3,4,5,6,7,8], 8, true); // animations
+		this.portal.play('open');
+		game.physics.enable(this.portal, Phaser.Physics.ARCADE); // enable object physics body
+
+		// Create player from Player prefab
+		// Let player spawn in checkPoint x,y so it will be updated when player reach check points
+		this.player = new Player(game, checkPoint_x, checkPoint_y, 'hero', 0); 
 		game.add.existing(this.player);
+
+		// Start message
+		this.message1 = game.add.text(400, 1100, "Where am I ?", style);
+		this.message1.anchor.set(0.5);
+
+		/*
+			Start create game object from their own prefabs in designed position
+		*/
 
 		// ************* Game level 1 *************
 
-		this.checkPoint = new CheckPoint(game, 4275, 700, 'button', 0, this.player);
+		// Check point
+		this.checkPoint = new CheckPoint(game, 4275, 896, 'checkPoint', 0, this.player);
 		game.add.existing(this.checkPoint);
 
+		// Ladder
 		this.ladder = new Ladder(game, 600, 650, 'ladder', 0, this.player);
 		game.add.existing(this.ladder);
 
+		// Box
 		this.box = new Box(game, 980, 305, 'box', 0, this.player, this.box2);
 		game.add.existing(this.box);
 
-		this.swingTrap = new SwingTrap(game, 800, 900, 'trap2', 0, this.player);
-		game.add.existing(this.swingTrap);
-		this.swingRope = new swingRope(game, 800, 715, 'rope', 0, this.player);
-		game.add.existing(this.swingRope);
-
+		// Traps
 		this.groundTrap = new GroundTrap(game, 900, 1190, 'spike', 0, this.player);
 		game.add.existing(this.groundTrap);
 		this.groundTrap2 = new GroundTrap(game, 1000, 1190, 'spike', 0, this.player);
 		game.add.existing(this.groundTrap2);
 
+		// Button
 		this.button = new Button(game, 2090, 1250, 'button', 0, this.player);
 		game.add.existing(this.button);
         z1 = this.button.y;
@@ -153,7 +175,7 @@ GamePlay.prototype = {
 
 
 		// ************* Game level 2 *************
-
+		// Boxes
 		this.box2 = new Box(game, 2500, 450, 'box', 0, this.player,  this.box);  
 		game.add.existing(this.box2);
 		this.box2.scale.setTo(1.1);
@@ -167,6 +189,7 @@ GamePlay.prototype = {
 		game.add.existing(this.box5);
 		this.box5.body.gravity.y = 0;
 
+		// Spikes trap
 		this.groundTrap3 = new GroundTrap(game, 5000, 1190, 'spike', 0, this.player); 
 		game.add.existing(this.groundTrap3);
 		this.groundTrap4 = new GroundTrap(game, 5100, 1190, 'spike', 0, this.player); 
@@ -176,12 +199,17 @@ GamePlay.prototype = {
 		this.groundTrap6 = new GroundTrap(game, 5300, 1190, 'spike', 0, this.player); 
 		game.add.existing(this.groundTrap6);
 
-		this.wallTrap = new WallTrap(game, 6000, 1400, 'wallTrap', 0, this.player);
+		// Chain sound
+		this.chainSound = game.add.audio('chain');
+
+		// Wall traps
+		this.wallTrap = new WallTrap(game, 5900, 1250, 'wallTrap', 0, this.player);
 		game.add.existing(this.wallTrap);
-		this.wallTrap2 = new WallTrap(game, 7000, 1400, 'wallTrap', 0, this.player); 
+		this.wallTrap2 = new WallTrap(game, 9000, 1250, 'wallTrap', 0, this.player); 
 		game.add.existing(this.wallTrap2);
 		this.wallTrap2.scale.x = -1;
 
+		// Ropes
 		this.rope = new Rope(game, 4700, 600, 'rope', 0, this.player);  
 		game.add.existing(this.rope);
 		this.rope2 = new Rope(game, 4900, 600, 'rope', 0, this.player);  
@@ -193,45 +221,44 @@ GamePlay.prototype = {
 		this.rope5 = new Rope(game, 4500, 600, 'rope', 0, this.player);  
 		game.add.existing(this.rope5);
 
+		// Buttons
 		this.button3 = new Button(game, 6400, 1250, 'button', 0, this.player, this.mapLayer);  
 		game.add.existing(this.button3);
 		z2 = this.button3.y;
-		/*
 		this.button4 = new Button(game, 7000, 1250, 'button', 0, this.player, this.mapLayer);  
 		game.add.existing(this.button4);
 		z3 = this.button4.y;
 		this.button5 = new Button(game, 7600, 1250, 'button', 0, this.player, this.mapLayer);  
 		game.add.existing(this.button5);
         z = this.button5.y;
-*/
-		this.checkPoint2 = new CheckPoint(game, 9100, 700, 'button', 0, this.player, this.mapLayer);
+
+        // 2nd check point
+		this.checkPoint2 = new CheckPoint(game, 9100, 1184, 'checkPoint', 0, this.player, this.mapLayer);
 		game.add.existing(this.checkPoint2);
+
 
 		// ************* Game level3 *************
 
+		// Swinging trap
 		this.swingTrap1 = new SwingTrap(game, 9650, 950, 'trap2', 0, this.player);  
 		game.add.existing(this.swingTrap1);
-		this.swingTrap2 = new SwingTrap(game, 10050, 950, 'trap2', 0, this.player);  
-		game.add.existing(this.swingTrap2);
 
-		this.box6 = new Box(game, 10025, 400, 'box', 0, this.player);  
-		game.add.existing(this.box6);
-
+		// Ladder & ropes
 		this.swingRope1 = new circleTrap(game, 10250, 1220, 'trap3', 0, this.player);  
 		game.add.existing(this.swingRope1);
 		this.swingRope1.body.setSize(180, 180, 30, 30);
 
-		this.checkPoint0 = new CheckPoint(game, 10500, 700, 'button', 0, this.player, this.mapLayer);
-		game.add.existing(this.checkPoint0);
-
-
-
 		this.ladder1 = new Ladder(game, 11100, 720, 'ladder', 0, this.player);  
 		game.add.existing(this.ladder1);
 
-		this.big_box = new Box(game,11300,0,'Big_box',0,this.player);
+		// Box
+		this.big_box = new Box(game,11470,0,'Big_box',0,this.player);
 		game.add.existing(this.big_box);
 
+		this.box6 = new Box(game, 10025, 400, 'box', 0, this.player);  
+		game.add.existing(this.box6);
+
+		// Spike traps
 		this.groundTrap7 = new GroundTrap(game, 11600, 640, 'spike', 0, this.player);  
 		game.add.existing(this.groundTrap7);
 		this.groundTrap8 = new GroundTrap(game, 11700, 640, 'spike', 0, this.player);  
@@ -247,118 +274,78 @@ GamePlay.prototype = {
 		this.groundTrap13 = new GroundTrap(game, 12200, 640, 'spike', 0, this.player); 
 		game.add.existing(this.groundTrap13);
 
+		// Button
 		this.button_L = new newButton(game, 12290, 590, 'button_1', 0, this.big_box,this.mapLayer,this.big_box);  
 		game.add.existing(this.button_L);
 		z4=this.button_L.x;
 
+		// moving trap
 		this.movingTrap = new movingtrap(game, 12600, 900, 'barrier', 0, this.player, 7, 1);  
 		game.add.existing(this.movingTrap);
 		z5=this.movingTrap.y;
 
+		// Chain saw trap
 		this.circle_trap = new circleTrap(game, 12790, 1395, 'circle_trap', 0, this.player);  
 		game.add.existing(this.circle_trap);
 
-
-		// Blocks
-		this.movingTrap1 = new movingtrap(game, 13500, 1250, 'barrier', 0, this.player, 2, 0.3);  
+		// Blocks (Use moving trap as a part of map layer)
+		this.movingTrap1 = new movingtrap(game, 13500, 1250, 'barrier', 0, this.player, 1, 0.3);  
 		game.add.existing(this.movingTrap1);
-		this.movingTrap2 = new movingtrap(game, 14400, 1200, 'barrier', 0, this.player, 2.5, 0.3);  
+		this.movingTrap2 = new movingtrap(game, 14400, 1200, 'barrier', 0, this.player, 2, 0.3);  
 		game.add.existing(this.movingTrap2);
-		this.movingTrap3 = new movingtrap(game, 15300, 1200, 'barrier', 0, this.player, 3, 0.3);  
+		this.movingTrap3 = new movingtrap(game, 15300, 1180, 'barrier', 0, this.player, 3, 0.3);  
 		game.add.existing(this.movingTrap3);
-		this.movingTrap4 = new movingtrap(game, 16200, 1200, 'barrier', 0, this.player, 3.5, 0.3);  
+		this.movingTrap4 = new movingtrap(game, 16200, 1180, 'barrier', 0, this.player, 3.5, 0.3);  
 		game.add.existing(this.movingTrap4);
-		this.movingTrap5 = new movingtrap(game, 17100, 1200, 'barrier', 0, this.player, 4.5, 0.3);  
+		this.movingTrap5 = new movingtrap(game, 17100, 1180, 'barrier', 0, this.player, 4.5, 0.3);  
 		game.add.existing(this.movingTrap5);
-		this.movingTrap6 = new movingtrap(game, 18000, 1200, 'barrier', 0, this.player, 5, 0.3);  
+		this.movingTrap6 = new movingtrap(game, 18000, 1180, 'barrier', 0, this.player, 5, 0.3);  
 		game.add.existing(this.movingTrap6);
 
-		this.button6 = new Button(game, 16750, 1250, 'button', 0, this.player, this.mapLayer);  
-		game.add.existing(this.button6);
-		z6 = this.button6.y;
-		this.button7 = new Button(game, 17660, 1250, 'button', 0, this.player, this.mapLayer);  
-		game.add.existing(this.button7);
-        z7 = this.button7.y;
+		// 3rd Check point
+		this.checkPoint3 = new CheckPoint(game, 18333, 1184, 'checkPoint', 0, this.player, this.mapLayer);
+		game.add.existing(this.checkPoint3);
 
+		// Moving traps
 		this.movingTrap7 = new movingtrap(game, 19300, 450, 'barrier', 0, this.player, 1.5, 0.5, this.mapLayer);  
 		game.add.existing(this.movingTrap7);
-		this.movingTrap7.movingSpeed += 20;
+		this.movingTrap7.movingSpeed += 30; // Set their up & down speed
 		this.movingTrap7.body.velocity.y = this.movingTrap7.movingSpeed;
-		this.movingTrap7.startMoving = true;
+		this.movingTrap7.startMoving = true; // Allow moving trap to move 
 
-		this.movingTrap8 = new movingtrap(game, 19520, 950, 'barrier', 0, this.player, 3, 0.5, this.mapLayer);  
-		game.add.existing(this.movingTrap8);
-		this.movingTrap8.movingSpeed += 40;
-		this.movingTrap8.body.velocity.y = this.movingTrap8.movingSpeed;
-		this.movingTrap8.startMoving = true;
-
-		this.movingTrap9 = new movingtrap(game, 19740, 450, 'barrier', 0, this.player, 3, 0.5, this.mapLayer);  
+		this.movingTrap9 = new movingtrap(game, 19740, 450, 'barrier', 0, this.player, 1.5, 0.5, this.mapLayer);  
 		game.add.existing(this.movingTrap9);
 		this.movingTrap9.movingSpeed += 50;
 		this.movingTrap9.body.velocity.y = this.movingTrap9.movingSpeed;
 		this.movingTrap9.startMoving = true;
 
-		this.movingTrap10 = new movingtrap(game, 19960, 950, 'barrier', 0, this.player, 3, 0.5, this.mapLayer);  
-		game.add.existing(this.movingTrap10);
-		this.movingTrap10.movingSpeed += 100;
-		this.movingTrap10.body.velocity.y = this.movingTrap10.movingSpeed;
-		this.movingTrap10.startMoving = true;
-
-		this.movingTrap11 = new movingtrap(game, 20180, 450, 'barrier', 0, this.player, 3, 0.5, this.mapLayer);  
+		this.movingTrap11 = new movingtrap(game, 20180, 450, 'barrier', 0, this.player, 1.5, 0.5, this.mapLayer);  
 		game.add.existing(this.movingTrap11);
 		this.movingTrap11.body.velocity.y = 150;
 		this.movingTrap11.startMoving = true;
 
-		this.movingTrap12 = new movingtrap(game, 20400, 950, 'barrier', 0, this.player, 1.5, 0.5, this.mapLayer);  
+		this.movingTrap12 = new movingtrap(game, 20500, 950, 'barrier', 0, this.player, 1.5, 0.5, this.mapLayer);  
 		game.add.existing(this.movingTrap12);
 		this.movingTrap12.body.velocity.y = 150;
 		this.movingTrap12.startMoving = true;
 
+		// Another group of spikes traps
 		this.groundTrap32 = new GroundTrap(game, 19300, 1200, 'spike', 0, this.player);  
 		game.add.existing(this.groundTrap32);
-		this.groundTrap33 = new GroundTrap(game, 19520, 1200, 'spike', 0, this.player);  
+		this.groundTrap33 = new GroundTrap(game, 19720, 1200, 'spike', 0, this.player);  
 		game.add.existing(this.groundTrap33);
-		this.groundTrap34 = new GroundTrap(game, 19740, 1200, 'spike', 0, this.player);  
+		this.groundTrap34 = new GroundTrap(game, 20140, 1200, 'spike', 0, this.player);  
 		game.add.existing(this.groundTrap34);
-		this.groundTrap35 = new GroundTrap(game, 19960, 1200, 'spike', 0, this.player);  
+		this.groundTrap35 = new GroundTrap(game, 20500, 1200, 'spike', 0, this.player);  
 		game.add.existing(this.groundTrap35);
-		this.groundTrap36 = new GroundTrap(game, 20180, 1200, 'spike', 0, this.player); 
-		game.add.existing(this.groundTrap36);
-		this.groundTrap37 = new GroundTrap(game, 20400, 1200, 'spike', 0, this.player); 
-		game.add.existing(this.groundTrap37);
-		this.groundTrap38 = new GroundTrap(game, 20500, 1200, 'spike', 0, this.player); 
-		game.add.existing(this.groundTrap38);
 
-		this.groundTrap39 = new GroundTrap(game, 19300, 520, 'spike', 0, this.player);  
-		game.add.existing(this.groundTrap39);
-		this.groundTrap39.scale.y = -1
+		// Check points
+		this.checkPoint5 = new CheckPoint(game, 21500, 700, 'checkPoint', 0, this.player, this.mapLayer);
+		game.add.existing(this.checkPoint5);
+		this.checkPoint4 = new CheckPoint(game, 25000, 922, 'checkPoint', 0, this.player, this.movingTrap17);
+		game.add.existing(this.checkPoint4);
 
-		this.groundTrap40 = new GroundTrap(game, 19520, 520, 'spike', 0, this.player);  
-		game.add.existing(this.groundTrap40);
-		this.groundTrap40.scale.y = -1
-
-		this.groundTrap41 = new GroundTrap(game, 19740, 520, 'spike', 0, this.player);  
-		game.add.existing(this.groundTrap41);
-		this.groundTrap41.scale.y = -1
-
-		this.groundTrap42 = new GroundTrap(game, 19960, 520, 'spike', 0, this.player);  
-		game.add.existing(this.groundTrap42);
-		this.groundTrap42.scale.y = -1
-
-		this.groundTrap43 = new GroundTrap(game, 20180, 520, 'spike', 0, this.player); 
-		game.add.existing(this.groundTrap43);
-		this.groundTrap43.scale.y = -1
-
-		this.groundTrap44 = new GroundTrap(game, 20400, 520, 'spike', 0, this.player); 
-		game.add.existing(this.groundTrap44);
-		this.groundTrap44.scale.y = -1
-
-		this.groundTrap45 = new GroundTrap(game, 20500, 520, 'spike', 0, this.player); 
-		game.add.existing(this.groundTrap45);
-		this.groundTrap45.scale.y = -1
-
-
-
+		// Maplayer blocks
 		this.movingTrap13 = new movingtrap(game, 22350, 1175, 'barrier', 0, this.player, 3.5, 1);  
 		game.add.existing(this.movingTrap13);
 		this.movingTrap14 = new movingtrap(game, 22750, 1100, 'barrier', 0, this.player, 3.5, 1);  
@@ -372,14 +359,12 @@ GamePlay.prototype = {
 		this.movingTrap17 = new movingtrap(game, 24950, 1050, 'barrier', 0, this.player, 4.5, 1);  
 		game.add.existing(this.movingTrap17);
 
-		this.checkPoint3 = new CheckPoint(game, 25000, 400, 'button', 0, this.player, this.movingTrap17);
-		game.add.existing(this.checkPoint3);
 
 
 
 
 		// ************* Game level 4 *************
-
+		// Ropes
 		this.rope6 = new Rope(game, 24700, 600, 'rope', 0, this.player);  
 		game.add.existing(this.rope6);
 		this.rope7 = new Rope(game, 25400, 600, 'rope', 0, this.player);  
@@ -387,12 +372,11 @@ GamePlay.prototype = {
 		this.rope8 = new Rope(game, 25650, 600, 'rope', 0, this.player);  
 		game.add.existing(this.rope8);
 
-		this.swingTrap3 = new SwingTrap(game, 22650, 750, 'trap2', 0, this.player);  
-		game.add.existing(this.swingTrap3);
-
-		this.movingTrap18 = new movingtrap(game, 23250, 500, 'barrier', 0, this.player, 4.5, 1);  
+		// Maplayer block
+		this.movingTrap18 = new movingtrap(game, 23250, 500, 'barrier', 0, this.player, 4.5, 1, this.mapLayer);  
 		game.add.existing(this.movingTrap18);
 
+		// Spike traps
 		this.groundTrap14 = new GroundTrap(game, 22606, 1190, 'spike', 0, this.player);  
 		game.add.existing(this.groundTrap14);
 		this.groundTrap15 = new GroundTrap(game, 23006, 1190, 'spike', 0, this.player);  
@@ -430,6 +414,9 @@ GamePlay.prototype = {
 		this.groundTrap31 = new GroundTrap(game, 25846, 1190, 'spike', 0, this.player);  
 		game.add.existing(this.groundTrap31);
 
+		// Swinging trap
+		this.swingTrap3 = new SwingTrap(game, 22650, 750, 'trap2', 0, this.player);  
+		game.add.existing(this.swingTrap3);
 		this.swingTrap4 = new SwingTrap(game, 26560, 530, 'trap2', 0, this.player);  
 		game.add.existing(this.swingTrap4);
 		this.swingTrap5 = new SwingTrap(game, 27220, 530, 'trap2', 0, this.player);  
@@ -437,27 +424,66 @@ GamePlay.prototype = {
 		this.swingTrap6 = new SwingTrap(game, 27840, 530, 'trap2', 0, this.player);  
 		game.add.existing(this.swingTrap6);
 
-		this.wallTrap3 = new WallTrap(game, 25953, 300, 'wallTrap', 0, this.player);  
+		// Wall traps
+		this.wallTrap3 = new WallTrap(game, 25953, 200, 'wallTrap', 0, this.player);  
 		game.add.existing(this.wallTrap3);
 		this.wallTrap4 = new WallTrap(game, 28455, 550, 'wallTrap', 0, this.player);  
 		game.add.existing(this.wallTrap4);
 		this.wallTrap4.scale.x = -1;
 
 
+		// Use for loop to create fogs effect through out game
+		for (var i = 0; i < 30; i++) {
+			this.fog = new Fog(game, i * 1800, 900, 'fog', 0);  
+			game.add.existing(this.fog);
+		}
 
+   		// Game camera set up, make it focus on player
+		game.camera.follow(this.player, 0.05, 0.05);
 
-		this.fog = this.add.sprite(0, 900, 'fog');
-		game.physics.enable(this.fog, Phaser.Physics.ARCADE);
-		this.fog.scale.setTo(5);
-		this.fog.body.velocity.x = 10;
+		// Create a Timer
+    	timer = game.time.create(false);
+		// Set a TimerEvent to occur after 1 seconds
+   		timer.loop(1000, updateCounter, this);
+   		timer.start();
 
-		game.camera.follow(this.player, 0.025, 0.025);
+		message = game.add.text(32, 16, "Time: " + total, style);
+	  	message.fixedToCamera = true; // Make timer stays on the screen all the time
+	  	message.cameraOffset.setTo(32, 16);
 
+	  	// Game dialog messages
+	  	this.message2 = game.add.text(this.checkPoint.x, this.checkPoint.y - 80, 
+			"Ha, Ha, Looks like you are confused about what happened to you. Don’t worry\n"
+			+ "I just want to play a game with you and you cannot refuse me\n" + 
+			"unless you want to stay in this space forever", style);
+		this.message2.anchor.set(0.5);
+		this.message2.alpha = 0; // Make them invisible and make them visible when player arrive each check points
+
+		this.message3 = game.add.text(this.checkPoint2.x, this.checkPoint2.y - 80, 
+			"I will take it as you accept this game. I know you are a good thief with a special talent."
+			, style);
+		this.message3.anchor.set(0.5);
+		this.message3.alpha = 0;
+
+		this.message4 = game.add.text(this.checkPoint3.x, this.checkPoint3.y - 80, 
+			"So it is your talent to set a time loop at a specific location.\n"
+			+ "This is why you can stole everything.\n" + 
+			"You are almost there. Looks like I made it so easy to you.", style);
+		this.message4.anchor.set(0.5);
+		this.message4.alpha = 0;
+		
+		// tip messages
+		this.tMessage = game.add.text(650, 1395, "Use arrow keys to move, UP key to jump\n" + "DOWN UP key to climb down and up on ladder and rope\n"
+			 + "Now, climb up the ladder in front of you and try to figure out how to jump over the spike trap", style);
+		this.tMessage.anchor.set(0.5);
+
+		this.tMessage2 = game.add.text(1350, 550, "if box is in the corner\n" + "hold C to drag box out\n", style);
+		this.tMessage2.anchor.set(0.5);
 	},
 
 
 	update: function() {
-		//this.fog.x = this.player.x;
+		// Collision event for ALL the objects!
 		game.physics.arcade.collide(this.player, this.mapLayer);
 		game.physics.arcade.collide(this.box, this.mapLayer);
 		game.physics.arcade.collide(this.box3, this.mapLayer);
@@ -466,11 +492,9 @@ GamePlay.prototype = {
 		game.physics.arcade.collide(this.box6, this.mapLayer);
 		game.physics.arcade.collide(this.button, this.mapLayer);
 		game.physics.arcade.collide(this.droppingBlock, this.mapLayer);
-		//game.physics.arcade.collide(this.droppingBlock, this.player);
 		game.physics.arcade.collide(this.droppingBlock2, this.mapLayer);
 		game.physics.arcade.collide(this.player, this.box2);
 		game.physics.arcade.collide(this.player, this.box);
-		//game.physics.arcade.collide(this.player, this.box2);
 		game.physics.arcade.collide(this.droppingBlock2, this.box2);
 		game.physics.arcade.collide(this.droppingBlock, this.box2);
 		game.physics.arcade.collide(this.mapLayer, this.box2);
@@ -482,11 +506,16 @@ GamePlay.prototype = {
 		game.physics.arcade.collide(this.box3, this.box4);
 		game.physics.arcade.collide(this.box4, this.box5);
 		game.physics.arcade.collide(this.box5, this.box3);
-
+		game.physics.arcade.collide(this.box7, this.mapLayer);
+		game.physics.arcade.collide(this.box8, this.mapLayer);
 		game.physics.arcade.collide(this.box5, this.box3);
 
 		game.physics.arcade.collide(this.wallTrap, this.box3);
 		game.physics.arcade.collide(this.wallTrap2, this.box3);
+		game.physics.arcade.collide(this.wallTrap, this.box4);
+		game.physics.arcade.collide(this.wallTrap2, this.box4);
+		game.physics.arcade.collide(this.wallTrap, this.box5);
+		game.physics.arcade.collide(this.wallTrap2, this.box5);
 		game.physics.arcade.collide(this.big_box, this.mapLayer);
 		game.physics.arcade.collide(this.big_box, this.button_L);
 		game.physics.arcade.collide(this.big_box, this.groundTrap7, this.collideSpike);
@@ -498,35 +527,37 @@ GamePlay.prototype = {
 		game.physics.arcade.collide(this.big_box, this.groundTrap13, this.collideSpike);
 		game.physics.arcade.collide(this.movingTrap, this.mapLayer);
 
-	
 		game.physics.arcade.collide(this.mapLayer, this.wallTrap3);
 		game.physics.arcade.collide(this.mapLayer, this.wallTrap4);
 
 		game.physics.arcade.collide(this.checkPoint, this.mapLayer);
 
-		if (this.button.hit) {
+		// Active dropping block trap when player hit button
+		if (this.button.hit) { 
+			// Blocks and box drop to the ground together
 			this.droppingBlock.body.velocity.y = 900;
-			this.droppingBlock2.body.velocity.y = 750;
-			this.box2.body.gravity.y = 1000;
+			this.droppingBlock2.body.velocity.y = 750; 
+			this.box2.body.gravity.y = 1000; 
 			this.button.y =z1+15;
 		}
 
+		// Active dropping block when player hit button
 		if (this.button3.hit) {
-			this.box3.body.gravity.y = 1000;
+			this.box3.body.gravity.y = 500;
 			this.button3.y =z2+15;
 		}
-/*
+
 		if (this.button4.hit) {
-			this.box4.body.gravity.y = 1000;
+			this.box4.body.gravity.y = 500;
 			this.button4.y =z3+15;
 		}
 
 		if (this.button5.hit) {
-			this.box5.body.gravity.y = 1000;
+			this.box5.body.gravity.y = 500;
 			this.button5.y =z+15;
 
 		}
-*/
+		
 		if (this.button_L.hit1) {
 			this.button_L.x=z4+6;
 		}
@@ -535,80 +566,121 @@ GamePlay.prototype = {
 			this.movingTrap.y=z5+300;
 		}
 
-		if(this.box3.hit_box){
-			this.button4.kill();
-		}
-
-		if(checkOverlap(this.box3,this.box4)){
-			if(this.box3.body.velocity.x==0){
-				this.box4.body.velocity.x=0;
-			}else{
-				this.box4.body.velocity.x=this.box3.body.velocity.x+10;
+		// Make sure box3, box4, box5 will be pushed in the same when they stacked up together
+		if (checkOverlap(this.box3,this.box4)){
+			// When they stacked up they will not moving
+			if (this.box3.body.velocity.x == 0) {
+				this.box4.body.velocity.x = 0;
+			} else {
+				// Make them moving in the same speed
+				this.box4.body.velocity.x = this.box3.body.velocity.x + 30;
 			}
 		}
 
-		if(checkOverlap1(this.box5,this.box4)){
-			if(this.box4.body.velocity.x==0){
-				this.box5.body.velocity.x=0;
-			}else{
-				this.box5.body.velocity.x=this.box4.body.velocity.x+10;
+		if (checkOverlap1(this.box5,this.box4)){
+			if(this.box4.body.velocity.x == 0){
+				this.box5.body.velocity.x = 0;
+			} else {
+				this.box5.body.velocity.x = this.box4.body.velocity.x + 30;
 			}
 		}
 
-		if(checkOverlap2(this.box5,this.box3)){
-			if(this.box3.body.velocity.x==0){
-				this.box5.body.velocity.x=0;
-			}else{
-				this.box5.body.velocity.x=this.box3.body.velocity.x+10;
+		if (checkOverlap2(this.box5,this.box3)) {
+			if (this.box3.body.velocity.x == 0) {
+				this.box5.body.velocity.x = 0;
+			} else {
+				this.box5.body.velocity.x = this.box3.body.velocity.x + 30;
 			}
 		}
 
+		// Logics for triggert the traps
+		// When player arrive in between 2 wall traps then active traps 
 		if (this.player.body.x >= 6100 && this.player.body.x <= 8400 && this.player.body.y <= 1300) {
+			// 2 wall traps will move toward each other
 			this.wallTrap2.body.moves = true;
 			this.wallTrap.body.moves = true;
 			this.wallTrap.body.velocity.x = 50;
 			this.wallTrap2.body.velocity.x = -50;
+			this.chainSound.play();
 		} else {
+			// do not let them moving if player is not there
 			this.wallTrap2.body.moves = false;
 			this.wallTrap.body.moves = false;
 		}
 
-		if (this.player.body.x >= 13000) {
+		// Active chain saw when player arrive in designed location
+		if (this.player.body.x >= 13000 && this.player.body.x <= 18076 && this.circle_trap.x<=17920) {
 			this.circle_trap.body.moves = true;
 			this.circle_trap.body.velocity.x = 280;
+			// If chain saw arrive destination then it will be fall into the ground and stop moving
+			if (this.circle_trap.x >= 17000) {
+				this.circle_trap.body.velocity.y = 50;
+			}
 		} else {
+			// do not let them moving if player is not there
 			this.circle_trap.body.moves = false;
 		}
 
-		if (this.button6.hit) {
-			this.button6.y =z6+15;
-
-		}
-
-		if (this.button7.hit) {
-			this.button7.y =z7+15;
-
-		}
-
+		// Active final wall traps
 		if (this.player.body.x >= 26070 && this.player.body.x <= 28350) {
 			this.wallTrap3.body.moves = true;
 			this.wallTrap4.body.moves = true;
 			this.wallTrap3.body.velocity.x = 50;
 			this.wallTrap4.body.velocity.x = -50;
-
+			// let wall trap 3 blocked player's way
 			if (this.wallTrap3.y < this.wallTrap4.y) {
 				this.wallTrap3.body.velocity.y = 100;
 			}
 		} else {
+			// do not let them moving if player is not there
 			this.wallTrap3.body.moves = false;
 			this.wallTrap4.body.moves = false;
 		}
 
+		// When player start take off then destroy first message so it won't appear again
+		if (Math.abs(this.player.x - this.message1.x >= 100)) {
+			this.message1.destroy();
+		}
+
+		// Make each dialog messages visible when player arrive in check points
+		if (this.checkPoint.hit) {
+			this.message2.alpha = 1;
+		}
+
+		if (this.checkPoint2.hit) {
+			this.message3.alpha = 1;
+		}
+
+		if (this.checkPoint3.hit) {
+			this.message4.alpha = 1;
+		}
+
+		// Make each dialog message disappear after player left the checkpoint 
+		if (this.message2.alpha == 1 && Math.abs(this.player.x - this.checkPoint.x >= 300)) {
+			this.message2.alpha = 0;
+		}
+
+		if (this.message3.alpha == 1 && Math.abs(this.player.x - this.checkPoint2.x >= 300)) {
+			this.message3.alpha = 0;
+		}
+
+		if (this.message4.alpha == 1 && Math.abs(this.player.x - this.checkPoint3.x >= 300)) {
+			this.message4.alpha = 0;
+		}
+
+		// When player reached portal then the game ends
+		if (game.physics.arcade.overlap(this.player, this.portal)) {
+			game.camera.onFadeComplete.add(resetFade2, this); // redirect game camera's on fade complete event
+			game.camera.fade(0x000000, 2000); // black scrren fade in
+		}
 
 
+
+		// detect object is overlap with each other
 		function checkOverlap(box3,box4){
 			var bound1=box3.getBounds();
 			var bound2=box4.getBounds();
+			// return true if 2 bounds intersects with each other
 			return Phaser.Rectangle.intersects(bound1, bound2);
 		}
 
@@ -627,18 +699,20 @@ GamePlay.prototype = {
 	},
 
 	
-
+	// helper function to check box is colliding
 	checkCollide: function(){
-
 		console.log("Box is colliding");
 	},
 
 
 
-	// debug
+	// debug area
 	render: function() {
+		//game.debug.text('Loop Count: ' + total, 32, 64);
+		//game.debug.bodyInfo(this.player, 32, 32);
+		//game.debug.bodyInfo(this.box, 32, 128);
+		//game.debug.body(this.player);
 		/*
-		game.debug.bodyInfo(this.player, 32, 32);
 		game.debug.body(this.player);
 		game.debug.body(this.swingTrap);
 		game.debug.body(this.groundTrap);
@@ -653,22 +727,91 @@ GamePlay.prototype = {
 		*/
 	},
 
+	// when big box has collision with spikes then destroy the spike traps
 	collideSpike: function(big_box, groundTrap) {
 		groundTrap.kill();
 	}
 
 }
 
-function out(snow) {
-	// send snow to opposite side and reset its velocity
-    this.x = game.width - this.x;
-    this.y = game.height - this.y;
-    this.body.velocity.x = Math.random() * 100;
+// Game Over state
+var GameOver = function(game) {
+	this.total = total; // Get player's timer result
+};
+GameOver.prototype = {
+	init: function() {
+
+	},
+	create: function() {
+		// set up background
+		game.stage.backgroundColor = "#000000";
+		var titleBackground = game.add.sprite(400, 500, 'titleBackground');
+		titleBackground.anchor.set(0.5);
+
+		// display dialog and result
+		var dialog = game.add.text(200, 300, "Congratulation, You made it, hope you didn’t be exhausted. I will set you free. \n" 
+		+ "Be ready for my next call. Ha, Ha, Ha, Ha", style);
+		var result = game.add.text(200, 400, "You finished this game in " + timeFormat(total) + "\nYou just beaten " + 
+			getRandom(90, 100) + "% of test players"
+			, style);
+	},
+	update: function() {
+
+	}
 }
 
+
+// function used to update player's spawn location
 function updateCheckPoint(player){
 			checkPoint_x = player.x + 20;
 			checkPoint_y = player.y;
+}
+
+// increase and update player's game time
+function updateCounter() {
+    total++;
+    message.text = ("Time: " + total);
+}
+
+// rest black screen 
+function resetFade() {
+    game.camera.resetFX(); //make black screen disappear
+    music.stop(); // stop current music so it wont overlap with new game play scene
+    game.state.start('GamePlay', true, false); // go back to game play
+}
+
+function resetFade1() {
+	// jump to game play after fade in
+    game.state.start('GamePlay', true, false);
+}
+
+function resetFade2() {
+	// jump to game over after fade in
+    game.state.start('GameOver', true, false);
+}
+
+// helper function to convert seconds to hrs: min: sec
+function timeFormat(time) {   
+    // Hours, minutes and seconds
+    var hrs = ~~(time / 3600);
+    var mins = ~~((time % 3600) / 60);
+    var secs = ~~time % 60;
+
+    // Output like "1:01" or "4:03:59" or "123:03:59"
+    var ret = "";
+
+    if (hrs > 0) {
+        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+    }
+
+    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+    ret += "" + secs;
+    return ret;
+}
+
+// get a random number between two numbers
+function getRandom(min, max) {
+  return Math.round(Math.random() * (max - min) + min);
 }
 
 // add states

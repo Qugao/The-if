@@ -11,6 +11,11 @@ function Box(game, x, y, key, frame, player, box, button) {
     this.body.drag.setTo(1000, 0);
     this.body.collideWorldBounds = true;
     this.body.gravity.y = 500;
+    this.anchor.set(0.5);
+
+    this.sound = game.add.audio('push');
+    this.cursors = this.game.input.keyboard.createCursorKeys();
+    this.hit = false;
 
 }
 
@@ -18,16 +23,33 @@ Box.prototype = Object.create(Phaser.Sprite.prototype);
 Box.prototype.constructor = Box;
 
 Box.prototype.update = function() {
-    game.physics.arcade.collide(this.player, this);
- //   game.physics.arcade.collide(this.box2, this);
     this.hit_box = game.physics.arcade.collide(this, this.button);
-    if (Math.abs(this.player.x - this.x) <= 200 && game.input.keyboard.isDown(Phaser.Keyboard.C) && this.player.body.touching.down == false) {
-      if(game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+    game.physics.arcade.collide(this, this.player);
+
+    if (Math.abs(this.player.x - this.x) <= 100 && game.input.keyboard.isDown(Phaser.Keyboard.C) && this.player.body.onFloor()) {
+      if(this.cursors.left.isDown) {
         this.body.velocity.x = -300;
-      } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+      //  this.hit = true;
+      } else if (this.cursors.right.isDown) {
         this.body.velocity.x = 300;
+        //this.hit = true;
       } else {
         this.body.acceleration.x = 0;
+       // this.hit = false;
       }
+    }
+
+    if (Math.abs(this.player.x - this.x) <= 100 && this.player.isWalking && Math.abs(this.player.y - this.y) <= 10) {
+      this.hit = true;
+    } else {
+      this.hit = false;
+    }
+
+    if (this.hit) {
+      console.log("hit");
+      this.sound.play('',0,0.5,false,false); 
+    } else {
+      this.sound.stop();
+      //console.log("not hit");
     }
 }

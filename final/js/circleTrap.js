@@ -21,7 +21,8 @@ circleTrap.prototype.update = function() {
 	this.hit = game.physics.arcade.overlap(this, this.player);
 
 	if (this.hit) {
-		game.state.start('GamePlay', true, false);
+		game.camera.fade(0x000000, 1000);
+    this.player.body.moves = false;
 	}
 	this.angle += 2;
 }

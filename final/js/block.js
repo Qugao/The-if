@@ -18,6 +18,7 @@ Block.prototype.constructor = Block;
 Block.prototype.update = function() {
 	this.hit = game.physics.arcade.collide(this, this.player);
 	if (this.hit && this.player.body.touching.up) {
-		game.state.start('GamePlay', true, false);
+		game.camera.fade(0x000000, 1000);
+    this.player.body.moves = false;
 	}
 }
