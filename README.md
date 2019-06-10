@@ -1,4 +1,4 @@
-# Shadow-Walker
+# The-if
 This is a classic platform puzzle game. Developed using Phaser 2 with javascript
 
 ## Update: May.29.2019
